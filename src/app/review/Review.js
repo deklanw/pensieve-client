@@ -20,6 +20,8 @@ const REVIEW_TYPE = {
   EASY: "easy",
 };
 
+// EmptyView flashes always. Need to change from willMount to didMount.
+
 const EmptyView = () => (
   <div className="review-container mt-5 pt-3">
     <div className="col-md-8 offset-md-2 text-center">

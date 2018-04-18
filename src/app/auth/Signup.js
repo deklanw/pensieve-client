@@ -10,13 +10,7 @@ import * as api from "./authActions";
 import { logSignupEvent } from "../../helpers/GoogleAnalytics";
 
 class Signup extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { email: "", password: "", name: "" };
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-  }
+  state = { email: "", password: "", name: "" };
 
   componentWillMount() {
     if (cookie.get("token")) {
@@ -24,12 +18,12 @@ class Signup extends Component {
     }
   }
 
-  onChange(event) {
+  onChange = (event) => {
     const { name, value } = event.target;
     this.setState({ [name]: value });
   }
 
-  onSubmit(event) {
+  onSubmit = (event) => {
     event.preventDefault();
     const { email, password, name } = this.state;
     api.signupUser(email, password, name).then(
