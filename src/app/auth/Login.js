@@ -9,12 +9,6 @@ import * as api from "./authActions";
 class Login extends Component {
   state = { email: "", password: "" };
 
-  componentWillMount() {
-    if (cookie.get("token")) {
-      this.props.history.push("/");
-    }
-  }
-
   onChange = (event) => {
     const { name, value } = event.target;
     this.setState(() => ({ [name]: value }));

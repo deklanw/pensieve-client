@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 import { Landing, NotFound, ComingSoon } from "../pages";
-import { Signup, Login, Logout, ReqAuth } from "./auth";
+import { Signup, Login, Logout } from "./auth";
 import { Decks, DeckHome, DeckNew } from "./decks";
 import Settings from "./settings/Settings";
 import CardHome from "./cards/home/CardHome";
@@ -11,8 +11,53 @@ import ReviewNew from "./review/new/ReviewNew";
 
 import { NavBar, Footer } from "../components";
 import GoogleAnalytics from "../helpers/GoogleAnalytics";
+import cookie from "js-cookie";
+import decode from "jwt-decode";
 
 import "./App.css";
+
+const isAuthenticated = () => {
+  const token = cookie.get("token");
+
+  // this ensures that the token both exists and is not malformed
+  try {
+    decode(token);
+  } catch (error) {
+    return false;
+  }
+  return true;
+};
+
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      isAuthenticated() ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to='/'
+        />
+      )
+    }
+  />
+);
+
+const PublicOnlyRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      !isAuthenticated() ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to='/'
+        />
+      )
+    }
+  />
+);
 
 class App extends Component {
   render() {
@@ -24,17 +69,17 @@ class App extends Component {
             <Route path="/" component={GoogleAnalytics} />
             <Switch>
               <Route exact path="/" component={Landing} />
-              <Route path="/login" component={Login} />
               <Route path="/logout" component={Logout} />
-              <Route path="/signup" component={Signup} />
+              <PublicOnlyRoute path="/login" component={Login} />
+              <PublicOnlyRoute path="/signup" component={Signup} />
 
-              <Route path="/settings" component={ReqAuth(Settings)} />
-              <Route exact path="/decks" component={ReqAuth(Decks)} />
-              <Route exact path="/decks/new" component={ReqAuth(DeckNew)} />
-              <Route exact path="/decks/:deckId" component={ReqAuth(DeckHome)} />
-              <Route exact path="/cards/:cardId" component={ReqAuth(CardHome)} />
-              <Route exact path="/sessions/new" component={ReqAuth(ReviewNew)} />
-              <Route exact path="/sessions/:sessionId" component={ReqAuth(Review)} />
+              <PrivateRoute path="/settings" component={Settings} />
+              <PrivateRoute exact path="/decks" component={Decks} />
+              <PrivateRoute exact path="/decks/new" component={DeckNew} />
+              <PrivateRoute exact path="/decks/:deckId" component={DeckHome} />
+              <PrivateRoute exact path="/cards/:cardId" component={CardHome} />
+              <PrivateRoute exact path="/sessions/new" component={ReviewNew} />
+              <PrivateRoute exact path="/sessions/:sessionId" component={Review} />
 
               <Route path="/about" component={ComingSoon} />
               <Route path="/api" component={ComingSoon} />

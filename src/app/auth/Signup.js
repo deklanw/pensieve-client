@@ -12,12 +12,6 @@ import { logSignupEvent } from "../../helpers/GoogleAnalytics";
 class Signup extends Component {
   state = { email: "", password: "", name: "" };
 
-  componentWillMount() {
-    if (cookie.get("token")) {
-      this.props.history.push("/");
-    }
-  }
-
   onChange = (event) => {
     const { name, value } = event.target;
     this.setState({ [name]: value });
