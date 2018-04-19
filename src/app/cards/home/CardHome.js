@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { Icon, Dropdown, Header, Label, Segment, Popup } from "semantic-ui-react";
+import {
+  Icon,
+  Dropdown,
+  Header,
+  Label,
+  Segment,
+  Popup
+} from "semantic-ui-react";
 
 import withErrors from "../../../helpers/withErrors";
 
@@ -11,20 +18,26 @@ import {
   DeleteCardModal,
   EditCardModal,
   ResetCardModal,
-  MODAL_TYPES,
+  MODAL_TYPES
 } from "../../../components/modals";
 
-import { ProgressBar } from "../../../components";
+import { ProgressBar, Loading } from "../../../components";
 
 import "./CardHome.css";
 
 const EmptyView = () => (
   <div className="card-home mt-5 pt-3">
     <div className="col-md-8 offset-md-2 text-center">
-      <span style={{ fontSize: "80px", fontWeight: "bold" }} role="img" aria-label="jsx-a11y">
+      <span
+        style={{ fontSize: "80px", fontWeight: "bold" }}
+        role="img"
+        aria-label="jsx-a11y"
+      >
         😅
       </span>
-      <h3 style={{ marginBottom: "40px" }}>Oops, that card does not seem to exist.</h3>
+      <h3 style={{ marginBottom: "40px" }}>
+        Oops, that card does not seem to exist.
+      </h3>
       <Link to="/" className="btn btn-primary">
         Go Home
       </Link>
@@ -37,9 +50,10 @@ class CardHome extends Component {
     card: {},
     showFront: false,
     showModalType: undefined,
+    loading: true
   };
 
-  componentWillMount() {
+  componentDidMount() {
     const { cardId } = this.props.match.params;
 
     if (cardId) {
@@ -57,7 +71,7 @@ class CardHome extends Component {
 
   fetchCard = cardId => {
     api.fetchCard(cardId).then(response => {
-      this.setState(() => ({ card: response.data }));
+      this.setState(() => ({ card: response.data, loading: false }));
     });
   };
 
@@ -84,8 +98,12 @@ class CardHome extends Component {
   };
 
   render() {
-    const { card, showFront, showModalType } = this.state;
+    const { card, showFront, showModalType, loading } = this.state;
     const { deck } = card;
+
+    if (loading) {
+      return <Loading />;
+    }
 
     if (!card || Object.keys(card).length === 0) {
       return <EmptyView />;
@@ -123,44 +141,71 @@ class CardHome extends Component {
                   icon={false}
                   pointing="top right"
                   trigger={
-                    <Icon name="ellipsis vertical" size="large" className="text-secondary mx-2" />
+                    <Icon
+                      name="ellipsis vertical"
+                      size="large"
+                      className="text-secondary mx-2"
+                    />
                   }
                 >
                   <Dropdown.Menu>
-                    <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.EDIT_ITEM}>
+                    <Dropdown.Item
+                      onClick={this.onShowModal}
+                      value={MODAL_TYPES.EDIT_ITEM}
+                    >
                       Edit Card
                     </Dropdown.Item>
                     {card.nextReviewDate && (
-                      <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.RESET_ITEM}>
+                      <Dropdown.Item
+                        onClick={this.onShowModal}
+                        value={MODAL_TYPES.RESET_ITEM}
+                      >
                         Reset Card
                       </Dropdown.Item>
                     )}
-                    <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.DELETE_ITEM}>
+                    <Dropdown.Item
+                      onClick={this.onShowModal}
+                      value={MODAL_TYPES.DELETE_ITEM}
+                    >
                       Delete Card
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
               <hr className="my-2" />
-              <Segment className="card-home-panel mb-2" padded onClick={this.onClick}>
-                <Label attached="bottom" onClick={this.onGoto} value={`/decks/${deck._id}`} as="a">
+              <Segment
+                className="card-home-panel mb-2"
+                padded
+                onClick={this.onClick}
+              >
+                <Label
+                  attached="bottom"
+                  onClick={this.onGoto}
+                  value={`/decks/${deck._id}`}
+                  as="a"
+                >
                   {deck.title}
                 </Label>
-                <Label attached="bottom right">{showFront ? "Front" : "Back"}</Label>
+                <Label attached="bottom right">
+                  {showFront ? "Front" : "Back"}
+                </Label>
                 <Popup
                   inverted
                   position="bottom right"
                   trigger={
                     <div className="card-strength d-flex align-items-center">
-                      <strong style={{ lineHeight: "1em" }} className="text-secondary mr-2">
+                      <strong
+                        style={{ lineHeight: "1em" }}
+                        className="text-secondary mr-2"
+                      >
                         Recall Strength
                       </strong>
                       <ProgressBar percent={card.recallRate} />
                     </div>
                   }
                 >
-                  You have a {parseInt(card.recallRate, 10)}% chance of remembering this card
-                  correctly
+                  You have a {parseInt(card.recallRate, 10)}% chance of
+                  remembering this card correctly
                 </Popup>
                 <h3 className="text-center my-5">{cardContent}</h3>
               </Segment>
@@ -174,7 +219,7 @@ class CardHome extends Component {
 
 CardHome.propTypes = {
   match: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 };
 
 export default withErrors(CardHome);

@@ -44,7 +44,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   />
 );
 
-const PublicOnlyRoute = ({ component: Component, ...rest }) => (
+const UnauthenticatedOnlyRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
@@ -70,8 +70,8 @@ class App extends Component {
             <Switch>
               <Route exact path="/" component={Landing} />
               <Route path="/logout" component={Logout} />
-              <PublicOnlyRoute path="/login" component={Login} />
-              <PublicOnlyRoute path="/signup" component={Signup} />
+              <UnauthenticatedOnlyRoute path="/login" component={Login} />
+              <UnauthenticatedOnlyRoute path="/signup" component={Signup} />
 
               <PrivateRoute path="/settings" component={Settings} />
               <PrivateRoute exact path="/decks" component={Decks} />

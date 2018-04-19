@@ -1,6 +1,14 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Button, Dropdown, Header, Icon, Segment, Popup, Label } from "semantic-ui-react";
+import {
+  Button,
+  Dropdown,
+  Header,
+  Icon,
+  Segment,
+  Popup,
+  Label
+} from "semantic-ui-react";
 import pluralize from "pluralize";
 
 import {
@@ -9,11 +17,11 @@ import {
   DeleteDeckModal,
   EditDeckModal,
   ResetDeckModal,
-  MODAL_TYPES,
+  MODAL_TYPES
 } from "../../../components/modals";
 import withErrors from "../../../helpers/withErrors";
 
-import { ProgressBar } from "../../../components";
+import { ProgressBar, Loading } from "../../../components";
 
 import * as api from "../deckActions";
 import * as cardApi from "../../cards/cardActions";
@@ -29,7 +37,10 @@ const EmptyView = ({ title, description, emoji = "✌️" }) => (
         <div className="col-md-6 offset-md-3">
           <Header size="large">
             {emoji} {title}
-            <Header.Subheader className="text-secondary" style={{ lineHeight: "1.4em" }}>
+            <Header.Subheader
+              className="text-secondary"
+              style={{ lineHeight: "1.4em" }}
+            >
               {description}
             </Header.Subheader>
           </Header>
@@ -45,30 +56,40 @@ class DeckHome extends Component {
     cards: [],
     showModalType: undefined,
     selectedCard: undefined,
+    loading: true
   };
 
-  componentWillMount() {
+  componentDidMount() {
     const { deckId } = this.props.match.params;
 
     if (deckId) {
-      this.fetchDeck(deckId);
-      this.fetchCards(deckId);
+      Promise.all([this.fetchDeck(deckId), this.fetchCards(deckId)]).then(
+        () => {
+          this.setState({ loading: false });
+        }
+      );
     }
   }
 
   onShowModal = (event, data) => this.setState({ showModalType: data.value });
 
   onShowCardModal = index =>
-    this.setState({ showModalType: MODAL_TYPES.CARD_ITEM, selectedCard: index });
+    this.setState({
+      showModalType: MODAL_TYPES.CARD_ITEM,
+      selectedCard: index
+    });
 
-  onCloseModal = () => this.setState({ showModalType: undefined, selectedCard: undefined });
+  onCloseModal = () =>
+    this.setState({ showModalType: undefined, selectedCard: undefined });
 
   onPrevCard = () =>
-    this.setState(({ selectedCard }) => ({ selectedCard: Math.max(selectedCard - 1, 0) }));
+    this.setState(({ selectedCard }) => ({
+      selectedCard: Math.max(selectedCard - 1, 0)
+    }));
 
   onNextCard = () =>
     this.setState(({ selectedCard, cards }) => ({
-      selectedCard: Math.min(selectedCard + 1, cards.length - 1),
+      selectedCard: Math.min(selectedCard + 1, cards.length - 1)
     }));
 
   createCard = card => {
@@ -82,7 +103,9 @@ class DeckHome extends Component {
   resetCard = cardId => {
     cardApi.resetCard(cardId).then(response => {
       const newCard = response.data;
-      const cards = this.state.cards.map(card => (card._id === newCard._id ? newCard : card));
+      const cards = this.state.cards.map(
+        card => (card._id === newCard._id ? newCard : card)
+      );
       this.setState(() => ({ cards: cards }));
     });
   };
@@ -90,7 +113,9 @@ class DeckHome extends Component {
   editCard = card => {
     cardApi.editCard(card).then(response => {
       const newCard = response.data;
-      const cards = this.state.cards.map(el => (el._id === newCard._id ? newCard : el));
+      const cards = this.state.cards.map(
+        el => (el._id === newCard._id ? newCard : el)
+      );
       this.setState(() => ({ cards: cards }));
     });
   };
@@ -105,13 +130,13 @@ class DeckHome extends Component {
   };
 
   fetchDeck = deckId => {
-    api.fetchDeck(deckId).then(response => {
+    return api.fetchDeck(deckId).then(response => {
       this.setState({ deck: response.data });
     });
   };
 
   fetchCards = deckId => {
-    cardApi.fetchCards(deckId).then(response => {
+    return cardApi.fetchCards(deckId).then(response => {
       this.setState({ cards: response.data });
     });
   };
@@ -146,8 +171,12 @@ class DeckHome extends Component {
   };
 
   render() {
-    const { deck, cards, showModalType, selectedCard } = this.state;
+    const { deck, cards, showModalType, selectedCard, loading } = this.state;
     const numExpiredCards = cards.filter(card => card.recallRate <= 0.5).length;
+
+    if (loading) {
+      return <Loading />;
+    }
 
     return (
       <div className="deck-home mt-4">
@@ -193,17 +222,24 @@ class DeckHome extends Component {
               </Header>
               <div className="deck-header">
                 <h1 className="font-weight-bold h3 mb-0 mt-0">{deck.title}</h1>
-                {deck.description && <p className="text-dark h5 mb-1">{deck.description}</p>}
+                {deck.description && (
+                  <p className="text-dark h5 mb-1">{deck.description}</p>
+                )}
               </div>
               <p
                 className="text-secondary text-uppercase m-0 mt-4 mb-2"
                 style={{ fontWeight: "600" }}
               >
-                {pluralize("card", cards.length, true)} &middot; {numExpiredCards} to review
+                {pluralize("card", cards.length, true)} &middot;{" "}
+                {numExpiredCards} to review
               </p>
               <div className="d-flex flex-wrap-reverse justify-content-between align-items-center">
                 <div className="left-side">
-                  <Button primary onClick={this.studyDeck} disabled={numExpiredCards === 0}>
+                  <Button
+                    primary
+                    onClick={this.studyDeck}
+                    disabled={numExpiredCards === 0}
+                  >
                     Study Now{" "}
                     <Label
                       style={{
@@ -211,7 +247,7 @@ class DeckHome extends Component {
                         margin: "-.53em",
                         marginLeft: "4px",
                         color: "#fff",
-                        background: "#0662E4",
+                        background: "#0662E4"
                       }}
                     >
                       {numExpiredCards}
@@ -253,22 +289,35 @@ class DeckHome extends Component {
                 icon={false}
                 pointing="top right"
                 trigger={
-                  <Icon name="ellipsis vertical" size="large" className="text-secondary m-2" />
+                  <Icon
+                    name="ellipsis vertical"
+                    size="large"
+                    className="text-secondary m-2"
+                  />
                 }
                 style={{
                   right: "12px",
                   position: "absolute",
-                  top: "12px",
+                  top: "12px"
                 }}
               >
                 <Dropdown.Menu>
-                  <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.EDIT_DECK}>
+                  <Dropdown.Item
+                    onClick={this.onShowModal}
+                    value={MODAL_TYPES.EDIT_DECK}
+                  >
                     Edit Deck
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.RESET_DECK}>
+                  <Dropdown.Item
+                    onClick={this.onShowModal}
+                    value={MODAL_TYPES.RESET_DECK}
+                  >
                     Reset Deck
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.DELETE_DECK}>
+                  <Dropdown.Item
+                    onClick={this.onShowModal}
+                    value={MODAL_TYPES.DELETE_DECK}
+                  >
                     Delete Deck
                   </Dropdown.Item>
                 </Dropdown.Menu>
@@ -305,7 +354,7 @@ class DeckHome extends Component {
 }
 
 DeckHome.propTypes = {
-  match: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired
 };
 
 export default withErrors(DeckHome);

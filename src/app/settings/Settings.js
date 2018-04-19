@@ -17,7 +17,7 @@ const PAGE = {
 class Settings extends Component {
   state = { page: PAGE.ACCOUNT };
 
-  componentWillMount() {
+  componentDidMount() {
     const page = this.props.location.hash.substr(1);
     if (Object.values(PAGE).includes(page)) {
       this.setState({ page: page });

@@ -5,6 +5,8 @@ import type { Deck } from "../../types";
 
 import withErrors from "../../helpers/withErrors";
 
+import { Loading } from "../../components";
+
 import * as api from "./deckActions";
 
 import DeckCard from "./DeckCard";
@@ -14,11 +16,11 @@ import "./Decks.css";
 const EmptyView = ({
   title,
   description,
-  emoji = "✌️",
+  emoji = "✌️"
 }: {
   title: string,
   description: string,
-  emoji?: string,
+  emoji?: string
 }) => (
   <div className="text-center ml-auto mr-auto my-5">
     <div className="text-center">
@@ -26,7 +28,10 @@ const EmptyView = ({
         <div className="col-md-6 offset-md-3">
           <Header size="large">
             {emoji} {title}
-            <Header.Subheader className="text-secondary" style={{ lineHeight: "1.4em" }}>
+            <Header.Subheader
+              className="text-secondary"
+              style={{ lineHeight: "1.4em" }}
+            >
               {description}
             </Header.Subheader>
           </Header>
@@ -38,36 +43,45 @@ const EmptyView = ({
 
 type Props = {
   history: any,
-  onError: any,
+  onError: any
 };
 
 type State = {
   decks: Array<Deck>,
   filter: string,
+  loading: boolean
 };
 
 class Decks extends Component<Props, State> {
-  state = { decks: [], filter: "" };
+  state = { decks: [], filter: "", loading: true };
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     this.fetchDecks();
   };
 
   onGoto = (event: Event, data: any) => this.props.history.push(data.value);
 
-  onSearch = ({ target }: { target: HTMLInputElement }) => this.setState({ filter: target.value });
+  onSearch = ({ target }: { target: HTMLInputElement }) =>
+    this.setState({ filter: target.value });
 
   fetchDecks = () => {
     api.fetchDecks().then(response => {
-      this.setState({ decks: response.data });
+      this.setState({ decks: response.data, loading: false });
     });
   };
 
   render() {
-    const { decks = [], filter } = this.state;
+    const { decks = [], filter, loading } = this.state;
 
     const filteredDecks =
-      filter.length > 0 ? decks.filter(deck => deck.title.indexOf(filter) !== -1) : decks;
+      filter.length > 0
+        ? decks.filter(deck => deck.title.indexOf(filter) !== -1)
+        : decks;
+
+    // should this go above filtered decks? might save a little time but would look sloppier
+    if (loading) {
+      return <Loading />;
+    }
 
     return (
       <div className="decks-page mt-4">
@@ -77,7 +91,9 @@ class Decks extends Component<Props, State> {
               <div className="decks-container-header">
                 <div>
                   <h1 className="h5 m-0">Decks</h1>
-                  <p className="text-secondary m-0">{decks.length} decks in your collection</p>
+                  <p className="text-secondary m-0">
+                    {decks.length} decks in your collection
+                  </p>
                 </div>
                 <div className="decks-container-actions">
                   {decks.length > 0 && (
@@ -97,7 +113,11 @@ class Decks extends Component<Props, State> {
               {filteredDecks.length > 0 ? (
                 <div className="row">
                   {filteredDecks.map((deck, key) => (
-                    <DeckCard className="col-6 col-sm-4 col-md-3" deck={deck} key={key} />
+                    <DeckCard
+                      className="col-6 col-sm-4 col-md-3"
+                      deck={deck}
+                      key={key}
+                    />
                   ))}
                 </div>
               ) : (

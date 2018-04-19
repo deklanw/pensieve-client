@@ -1,7 +1,20 @@
 import React, { Component } from "react";
-import { Dropdown, Divider, Label, Modal, Popup, Icon, Button } from "semantic-ui-react";
+import {
+  Dropdown,
+  Divider,
+  Label,
+  Modal,
+  Popup,
+  Icon,
+  Button
+} from "semantic-ui-react";
 
-import { DeleteCardModal, EditCardModal, ResetCardModal, MODAL_TYPES } from "./index";
+import {
+  DeleteCardModal,
+  EditCardModal,
+  ResetCardModal,
+  MODAL_TYPES
+} from "./index";
 
 import ProgressBar from "../ProgressBar";
 
@@ -37,7 +50,12 @@ class CardModal extends Component {
     const { card, showModalType } = this.state;
 
     return (
-      <Modal size="tiny" open={open} onClose={onClose} className="position-relative">
+      <Modal
+        size="tiny"
+        open={open}
+        onClose={onClose}
+        className="position-relative"
+      >
         <DeleteCardModal
           open={showModalType === MODAL_TYPES.DELETE_ITEM}
           onClose={this.onCloseModal}
@@ -60,18 +78,29 @@ class CardModal extends Component {
             on="click"
             icon={false}
             pointing="top right"
-            trigger={<Icon name="ellipsis vertical" className="text-secondary mx-2" />}
+            trigger={
+              <Icon name="ellipsis vertical" className="text-secondary mx-2" />
+            }
           >
             <Dropdown.Menu>
-              <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.EDIT_ITEM}>
+              <Dropdown.Item
+                onClick={this.onShowModal}
+                value={MODAL_TYPES.EDIT_ITEM}
+              >
                 Edit Card
               </Dropdown.Item>
               {card.nextReviewDate && (
-                <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.RESET_ITEM}>
+                <Dropdown.Item
+                  onClick={this.onShowModal}
+                  value={MODAL_TYPES.RESET_ITEM}
+                >
                   Reset Card
                 </Dropdown.Item>
               )}
-              <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.DELETE_ITEM}>
+              <Dropdown.Item
+                onClick={this.onShowModal}
+                value={MODAL_TYPES.DELETE_ITEM}
+              >
                 Delete Card
               </Dropdown.Item>
             </Dropdown.Menu>

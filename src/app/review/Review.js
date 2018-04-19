@@ -1,7 +1,15 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { Button, Dropdown, Icon, Header, Label, Progress, Segment } from "semantic-ui-react";
+import {
+  Button,
+  Dropdown,
+  Icon,
+  Header,
+  Label,
+  Progress,
+  Segment
+} from "semantic-ui-react";
 
 import withErrors from "../../helpers/withErrors";
 
@@ -12,23 +20,32 @@ import Results from "./Results";
 
 import "./Review.css";
 
-import { DeleteCardModal, EditCardModal, MODAL_TYPES } from "../../components/modals";
+import {
+  DeleteCardModal,
+  EditCardModal,
+  MODAL_TYPES
+} from "../../components/modals";
+import { Loading } from "../../components";
 
 const REVIEW_TYPE = {
   REDO: "redo",
   HARD: "hard",
-  EASY: "easy",
+  EASY: "easy"
 };
-
-// EmptyView flashes always. Need to change from willMount to didMount.
 
 const EmptyView = () => (
   <div className="review-container mt-5 pt-3">
     <div className="col-md-8 offset-md-2 text-center">
-      <span style={{ fontSize: "80px", fontWeight: "bold" }} role="img" aria-label="jsx-a11y">
+      <span
+        style={{ fontSize: "80px", fontWeight: "bold" }}
+        role="img"
+        aria-label="jsx-a11y"
+      >
         😅
       </span>
-      <h3 style={{ marginBottom: "40px" }}>Oops, something seems to have gone wrong.</h3>
+      <h3 style={{ marginBottom: "40px" }}>
+        Oops, something seems to have gone wrong.
+      </h3>
       <Link to="/" className="btn btn-primary">
         Go Home
       </Link>
@@ -43,9 +60,10 @@ class Review extends Component {
     showAnswers: false,
     session: {},
     showModalType: undefined,
+    loading: true
   };
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     const { sessionId } = this.props.match.params;
 
     if (sessionId) {
@@ -61,7 +79,10 @@ class Review extends Component {
 
   onReview = (event, data) => {
     const { value } = data;
-    const { index, session: { cards } } = this.state;
+    const {
+      index,
+      session: { cards }
+    } = this.state;
     const card = cards[index];
 
     this.reviewCard(card._id, value);
@@ -70,13 +91,13 @@ class Review extends Component {
   onReveal = () => {
     this.setState(({ showFront }) => ({
       showAnswers: true,
-      showFront: !showFront,
+      showFront: !showFront
     }));
   };
 
   fetchSession = sessionId => {
     api.fetchSession(sessionId).then(response => {
-      this.setState({ session: response.data });
+      this.setState({ session: response.data, loading: false });
     });
   };
 
@@ -94,7 +115,7 @@ class Review extends Component {
           session: { ...session, cards: cards },
           index: index + 1,
           showAnswers: false,
-          showFront: true,
+          showFront: true
         };
       });
     });
@@ -113,7 +134,10 @@ class Review extends Component {
   };
 
   deleteCard = () => {
-    const { index, session: { cards } } = this.state;
+    const {
+      index,
+      session: { cards }
+    } = this.state;
     const card = cards[index];
 
     cardApi.deleteCard(card._id).then(response => {
@@ -121,15 +145,26 @@ class Review extends Component {
       this.setState(({ session }) => ({
         session: { ...session, cards: newCards },
         showAnswers: false,
-        showFront: true,
+        showFront: true
       }));
       this.onCloseModal();
     });
   };
 
   render() {
-    const { index, session, showFront, showAnswers, showModalType } = this.state;
+    const {
+      index,
+      session,
+      showFront,
+      showAnswers,
+      showModalType,
+      loading
+    } = this.state;
     const { cards = [] } = session;
+
+    if (loading) {
+      return <Loading />;
+    }
 
     if (cards.length === 0) {
       return <EmptyView />;
@@ -167,30 +202,55 @@ class Review extends Component {
                   <strong>{index + 1}</strong> out of {cards.length}
                 </p>
               </div>
-              <Segment className="review-container-panel mt-2 mb-4" onClick={this.onReveal}>
+              <Segment
+                className="review-container-panel mt-2 mb-4"
+                onClick={this.onReveal}
+              >
                 <Dropdown
                   on="click"
                   icon={false}
                   pointing="top right"
                   trigger={
-                    <Icon name="ellipsis vertical" size="large" className="text-secondary m-2" />
+                    <Icon
+                      name="ellipsis vertical"
+                      size="large"
+                      className="text-secondary m-2"
+                    />
                   }
                   style={{ position: "absolute", right: "16px", top: "12px" }}
                 >
                   <Dropdown.Menu>
-                    <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.EDIT_ITEM}>
+                    <Dropdown.Item
+                      onClick={this.onShowModal}
+                      value={MODAL_TYPES.EDIT_ITEM}
+                    >
                       Edit Card
                     </Dropdown.Item>
-                    <Dropdown.Item onClick={this.onShowModal} value={MODAL_TYPES.DELETE_ITEM}>
+                    <Dropdown.Item
+                      onClick={this.onShowModal}
+                      value={MODAL_TYPES.DELETE_ITEM}
+                    >
                       Delete Card
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-                <Progress attached="top" value={index} total={cards.length} color="blue" />
-                <Label attached="bottom" onClick={this.onGoto} value={`/decks/${deck._id}`} as="a">
+                <Progress
+                  attached="top"
+                  value={index}
+                  total={cards.length}
+                  color="blue"
+                />
+                <Label
+                  attached="bottom"
+                  onClick={this.onGoto}
+                  value={`/decks/${deck._id}`}
+                  as="a"
+                >
                   {deck.title}
                 </Label>
-                <Label attached="bottom right">{showFront ? "Front" : "Back"}</Label>
+                <Label attached="bottom right">
+                  {showFront ? "Front" : "Back"}
+                </Label>
                 <Header as="h2" className="text-center my-5">
                   {cardContent}
                 </Header>
@@ -242,7 +302,7 @@ class Review extends Component {
 }
 
 Review.propTypes = {
-  match: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired
 };
 
 export default withErrors(Review);
