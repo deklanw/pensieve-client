@@ -25,6 +25,7 @@ class AddItemModal extends Component {
   render() {
     const { front, back, numCards } = this.state;
     const { open } = this.props;
+    const disabledButton = !front.length;
 
     return (
       <Modal
@@ -67,7 +68,7 @@ class AddItemModal extends Component {
         </Modal.Content>
         <Modal.Actions>
           <Button onClick={this.onClose}>Cancel</Button>
-          <Button onClick={this.onSubmit} primary>
+          <Button onClick={this.onSubmit} disabled={disabledButton} primary>
             Create Card
           </Button>
         </Modal.Actions>

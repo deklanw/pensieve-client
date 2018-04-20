@@ -9,7 +9,7 @@ import * as api from "../deckActions";
 class DeckNew extends Component {
   state = {
     title: "",
-    description: "",
+    description: ""
   };
 
   onChange = e => this.setState({ [e.target.name]: e.target.value });
@@ -27,13 +27,16 @@ class DeckNew extends Component {
 
   render() {
     const { title, description } = this.state;
+    const disabledButton = !title.length;
 
     return (
       <div className="container mt-4">
         <div className="row">
           <div className="col-sm-8 offset-sm-2 col-md-8 offset-md-2">
             <Segment>
-              <h1 className="h4 mb-3 text-center font-weight-bold">Create a new study deck</h1>
+              <h1 className="h4 mb-3 text-center font-weight-bold">
+                Create a new study deck
+              </h1>
               <Form>
                 <Form.Field required>
                   <label>Deck title</label>
@@ -55,7 +58,12 @@ class DeckNew extends Component {
                   />
                 </Form.Field>
                 <Form.Field className="mt-4">
-                  <Button onClick={this.onSubmit} primary fluid>
+                  <Button
+                    onClick={this.onSubmit}
+                    disabled={disabledButton}
+                    primary
+                    fluid
+                  >
                     Create Deck
                   </Button>
                 </Form.Field>
@@ -69,7 +77,7 @@ class DeckNew extends Component {
 }
 
 DeckNew.propTypes = {
-  history: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 };
 
 export default withErrors(DeckNew);
