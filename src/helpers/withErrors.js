@@ -14,8 +14,9 @@ type State = {
 const withErrors = (ComposedComponent: ElementType) => {
   class ErrorHandler extends Component<Props, State> {
     state = { open: false, message: "" };
+    resInterceptor: number;
 
-    constructor(props) {
+    constructor(props: any) {
       super(props);
       this.resInterceptor = axios.interceptors.response.use(null, error => {
         if (error.response && error.response.status === 401) {
