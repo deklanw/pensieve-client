@@ -1,22 +1,23 @@
 /* @flow */
 import React, { Component, Fragment } from "react";
 import FlashMessage from "../components/FlashMessage";
-import axios from "axios";
+import axios from "../helpers/authAxios";
 import cookie from "js-cookie";
 import type { ElementType } from "react";
 
 type Props = any;
 type State = {
   open: boolean,
-  message: string,
+  message: string
 };
 
 const withErrors = (ComposedComponent: ElementType) => {
   class ErrorHandler extends Component<Props, State> {
     state = { open: false, message: "" };
 
-    componentWillMount() {
-      axios.interceptors.response.use(null, error => {
+    constructor(props) {
+      super(props);
+      this.resInterceptor = axios.interceptors.response.use(null, error => {
         if (error.response && error.response.status === 401) {
           cookie.remove("token");
           cookie.remove("user");
@@ -29,6 +30,10 @@ const withErrors = (ComposedComponent: ElementType) => {
       });
     }
 
+    componentWillUnmount() {
+      axios.interceptors.response.eject(this.resInterceptor);
+    }
+
     onDismiss = () => this.setState({ open: false, message: "" });
 
     onError = (message: string) => this.setState({ open: true, message });
@@ -38,13 +43,13 @@ const withErrors = (ComposedComponent: ElementType) => {
       return (
         <Fragment>
           {open &&
-          message.length > 0 && (
-            <FlashMessage
-              onDismiss={this.onDismiss}
-              className="App-flashMessage"
-              message={message}
-            />
-          )}
+            message.length > 0 && (
+              <FlashMessage
+                onDismiss={this.onDismiss}
+                className="App-flashMessage"
+                message={message}
+              />
+            )}
           <ComposedComponent {...this.props} onError={this.onError} />
         </Fragment>
       );

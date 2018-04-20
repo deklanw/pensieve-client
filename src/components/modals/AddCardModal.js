@@ -14,7 +14,12 @@ class AddItemModal extends Component {
 
   onSubmit = () => {
     this.props.onSubmit(this.state);
-    this.setState(state => ({ front: "", back: "", numCards: state.numCards + 1 }));
+    // the numCards increases even if onSubmit results in an error
+    this.setState(state => ({
+      front: "",
+      back: "",
+      numCards: state.numCards + 1
+    }));
   };
 
   render() {
@@ -22,7 +27,12 @@ class AddItemModal extends Component {
     const { open } = this.props;
 
     return (
-      <Modal open={open} onClose={this.onClose} size="tiny" className="position-relative">
+      <Modal
+        open={open}
+        onClose={this.onClose}
+        size="tiny"
+        className="position-relative"
+      >
         <Modal.Header>
           <div className="d-flex justify-content-between">
             <div>Create Cards</div>
@@ -69,7 +79,7 @@ class AddItemModal extends Component {
 AddItemModal.propTypes = {
   open: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 };
 
 export default AddItemModal;
