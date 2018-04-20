@@ -1,25 +1,29 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import cookie from "js-cookie";
 import cx from "classnames";
 import { withRouter } from "react-router";
+import isAuthenticated from "../helpers/isAuthenticated";
 
 class NavBar extends Component {
   state = { isCollapsed: false };
 
-  onCollapse = () => this.setState(({ isCollapsed }) => ({ isCollapsed: !isCollapsed }));
+  onCollapse = () =>
+    this.setState(({ isCollapsed }) => ({ isCollapsed: !isCollapsed }));
 
   render() {
     const { className } = this.props;
     const { isCollapsed } = this.state;
-    const authenticated = Boolean(cookie.get("token"));
+    const authenticated = isAuthenticated();
 
     const isLandingPage = this.props.location.pathname === "/";
 
     return (
       <nav
         className={cx(className, "navbar navbar-expand-sm navbar-dark")}
-        style={{ zIndex: "2000", backgroundColor: isLandingPage ? "#1574fb" : "#262E45" }}
+        style={{
+          zIndex: "2000",
+          backgroundColor: isLandingPage ? "#1574fb" : "#262E45"
+        }}
       >
         <div className="container">
           <Link className="navbar-brand" to="/">
@@ -38,17 +42,29 @@ class NavBar extends Component {
             {authenticated ? (
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
-                  <Link to="/decks" className="nav-link" onClick={this.onCollapse}>
+                  <Link
+                    to="/decks"
+                    className="nav-link"
+                    onClick={this.onCollapse}
+                  >
                     Decks
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/settings" className="nav-link" onClick={this.onCollapse}>
+                  <Link
+                    to="/settings"
+                    className="nav-link"
+                    onClick={this.onCollapse}
+                  >
                     Settings
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/logout" className="nav-link" onClick={this.onCollapse}>
+                  <Link
+                    to="/logout"
+                    className="nav-link"
+                    onClick={this.onCollapse}
+                  >
                     Logout
                   </Link>
                 </li>
@@ -56,7 +72,11 @@ class NavBar extends Component {
             ) : (
               <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
-                  <Link to="/login" className="nav-link" onClick={this.onCollapse}>
+                  <Link
+                    to="/login"
+                    className="nav-link"
+                    onClick={this.onCollapse}
+                  >
                     Login
                   </Link>
                 </li>

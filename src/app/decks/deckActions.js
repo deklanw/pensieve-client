@@ -1,32 +1,29 @@
-import axios from "axios";
-import cookie from "js-cookie";
-
-axios.defaults.baseURL = process.env.REACT_APP_SERVER_URL;
+import axios from "../../helpers/authAxios";
 
 export const fetchDecks = () => {
-  return axios.get("/api/decks", { headers: { Authorization: cookie.get("token") } });
+  return axios.get("/api/decks");
 };
 
 export const fetchDeck = deckId => {
-  return axios.get(`/api/decks/${deckId}`, { headers: { Authorization: cookie.get("token") } });
+  return axios.get(`/api/decks/${deckId}`);
 };
 
 export const editDeck = deck => {
-  return axios.put(`/api/decks/${deck._id}`, deck, { headers: { Authorization: cookie.get("token") } });
+  return axios.put(`/api/decks/${deck._id}`, deck);
 };
 
 export const createDeck = params => {
-  return axios.post("/api/decks", params, { headers: { Authorization: cookie.get("token") } });
+  return axios.post("/api/decks", params);
 };
 
 export const resetDeck = deckId => {
-  return axios.delete(`/api/decks/${deckId}/review`, { headers: { Authorization: cookie.get("token") } });
+  return axios.delete(`/api/decks/${deckId}/review`);
 };
 
 export const studyDeck = deckId => {
-  return axios.post(`/api/sessions`, { deck: deckId, type: "deck" }, { headers: { Authorization: cookie.get("token") } });
+  return axios.post(`/api/sessions`, { deck: deckId, type: "deck" });
 };
 
 export const deleteDeck = deckId => {
-  return axios.delete(`/api/decks/${deckId}`, { headers: { Authorization: cookie.get("token") } });
+  return axios.delete(`/api/decks/${deckId}`);
 };
