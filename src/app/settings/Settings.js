@@ -11,7 +11,7 @@ import withErrors from "../../helpers/withErrors";
 const PAGE = {
   ACCOUNT: "account",
   NOTIFS: "notifications",
-  SECURITY: "security",
+  SECURITY: "security"
 };
 
 class Settings extends Component {
@@ -24,7 +24,7 @@ class Settings extends Component {
     }
   }
 
-  componentWillUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.location !== nextProps.location) {
       const page = nextProps.location.hash.substr(1);
       if (Object.values(PAGE).includes(page)) {
@@ -45,11 +45,19 @@ class Settings extends Component {
                 <Menu.Item active={page === PAGE.ACCOUNT} link href="#account">
                   <Icon name="settings" />Account profile
                 </Menu.Item>
-                <Menu.Item active={page === PAGE.NOTIFS} link href="#notifications">
+                <Menu.Item
+                  active={page === PAGE.NOTIFS}
+                  link
+                  href="#notifications"
+                >
                   <Icon name="inbox" />
                   Notifications
                 </Menu.Item>
-                <Menu.Item active={page === PAGE.SECURITY} link href="#security">
+                <Menu.Item
+                  active={page === PAGE.SECURITY}
+                  link
+                  href="#security"
+                >
                   <Icon name="setting" />
                   Security
                 </Menu.Item>
@@ -60,7 +68,7 @@ class Settings extends Component {
                 {
                   [PAGE.ACCOUNT]: <Account {...this.props} />,
                   [PAGE.NOTIFS]: <Notifications {...this.props} />,
-                  [PAGE.SECURITY]: <Security {...this.props} />,
+                  [PAGE.SECURITY]: <Security {...this.props} />
                 }[page]
               }
             </div>

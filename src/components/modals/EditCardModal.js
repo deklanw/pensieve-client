@@ -5,7 +5,7 @@ import { Button, Form, Modal, TextArea } from "semantic-ui-react";
 class EditCardModal extends Component {
   state = { ...this.props.card };
 
-  componentWillUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.card !== nextProps.card) {
       this.setState({ ...nextProps.card });
     }
@@ -20,7 +20,12 @@ class EditCardModal extends Component {
     const { open, onClose } = this.props;
 
     return (
-      <Modal open={open} onClose={onClose} size="tiny" className="position-relative">
+      <Modal
+        open={open}
+        onClose={onClose}
+        size="tiny"
+        className="position-relative"
+      >
         <Modal.Header>Edit Card</Modal.Header>
         <Modal.Content>
           <Form>
@@ -63,7 +68,7 @@ EditCardModal.propTypes = {
   open: PropTypes.bool,
   card: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 };
 
 export default EditCardModal;

@@ -21,7 +21,7 @@ import ProgressBar from "../ProgressBar";
 class CardModal extends Component {
   state = { card: this.props.card, showModalType: undefined };
 
-  componentWillUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.card !== nextProps.card) {
       this.setState({ card: nextProps.card });
     }

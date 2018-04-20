@@ -5,7 +5,7 @@ import { Button, Form, Modal, Input, TextArea } from "semantic-ui-react";
 class EditDeckModal extends Component {
   state = { ...this.props.deck };
 
-  componentWillUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.props.deck !== nextProps.deck) {
       this.setState({ ...nextProps.deck });
     }
@@ -20,7 +20,12 @@ class EditDeckModal extends Component {
     const { open, onClose } = this.props;
 
     return (
-      <Modal open={open} onClose={onClose} size="tiny" className="position-relative">
+      <Modal
+        open={open}
+        onClose={onClose}
+        size="tiny"
+        className="position-relative"
+      >
         <Modal.Header>Edit Deck</Modal.Header>
         <Modal.Content>
           <Form>
@@ -61,7 +66,7 @@ EditDeckModal.propTypes = {
   open: PropTypes.bool,
   deck: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 };
 
 export default EditDeckModal;
