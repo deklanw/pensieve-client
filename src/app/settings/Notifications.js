@@ -13,7 +13,7 @@ import { Loading } from "../../components";
 import * as api from "./userActions";
 
 class Notifications extends Component {
-  state = { prefs: {}, loading: true };
+  state = { prefs: {}, isLoading: true };
 
   componentDidMount() {
     this.fetchUser();
@@ -28,24 +28,24 @@ class Notifications extends Component {
   fetchUser = () => {
     api.fetchUser().then(({ data }) => {
       const { name, email, prefs } = data;
-      this.setState({ name, email, prefs, loading: false });
+      this.setState({ name, email, prefs, isLoading: false });
     });
   };
 
   editNotifs = () => {
     const { name, email, prefs } = this.state;
-    this.setState({ loading: true });
+    this.setState({ isLoading: true });
     api.editUser({ name, email, prefs }).then(({ data }) => {
       const { name, email, prefs } = data;
-      this.setState({ name, email, prefs, loading: false });
+      this.setState({ name, email, prefs, isLoading: false });
     });
   };
 
   render() {
-    const { prefs, loading } = this.state;
+    const { prefs, isLoading } = this.state;
     const isEmailOn = prefs.emailNotifs;
 
-    if (loading) {
+    if (isLoading) {
       return <Loading />;
     }
 

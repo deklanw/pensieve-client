@@ -48,6 +48,7 @@ class AddItemModal extends Component {
                 value={front}
                 onChange={this.onChange}
                 name="front"
+                autoFocus
                 autoHeight
                 rows={4}
                 placeholder="Add to the card front..."

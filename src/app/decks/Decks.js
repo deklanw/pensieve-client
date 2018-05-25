@@ -5,8 +5,6 @@ import type { Deck } from "../../types";
 
 import withErrors from "../../helpers/withErrors";
 
-import { Loading } from "../../components";
-
 import * as api from "./deckActions";
 
 import DeckCard from "./DeckCard";
@@ -49,11 +47,11 @@ type Props = {
 type State = {
   decks: Array<Deck>,
   filter: string,
-  loading: boolean
+  isLoading: boolean
 };
 
 class Decks extends Component<Props, State> {
-  state = { decks: [], filter: "", loading: true };
+  state = { decks: [], filter: "", isLoading: true };
 
   componentDidMount = () => {
     this.fetchDecks();
@@ -66,22 +64,17 @@ class Decks extends Component<Props, State> {
 
   fetchDecks = () => {
     api.fetchDecks().then(response => {
-      this.setState({ decks: response.data, loading: false });
+      this.setState({ decks: response.data, isLoading: false });
     });
   };
 
   render() {
-    const { decks = [], filter, loading } = this.state;
+    const { decks = [], filter, isLoading } = this.state;
 
     const filteredDecks =
       filter.length > 0
         ? decks.filter(deck => deck.title.indexOf(filter) !== -1)
         : decks;
-
-    // should this go above filtered decks? might save a little time but would look sloppier
-    if (loading) {
-      return <Loading />;
-    }
 
     return (
       <div className="decks-page mt-4">
@@ -110,11 +103,11 @@ class Decks extends Component<Props, State> {
                 </div>
               </div>
               <hr className="mt-2 mb-2" />
-              {filteredDecks.length > 0 ? (
+              {!isLoading && filteredDecks.length > 0 ? (
                 <div className="row">
                   {filteredDecks.map((deck, key) => (
                     <DeckCard
-                      className="col-6 col-sm-4 col-md-3"
+                      className="col-6 col-sm-4 col-md-3 float-left"
                       deck={deck}
                       key={key}
                     />
@@ -122,8 +115,12 @@ class Decks extends Component<Props, State> {
                 </div>
               ) : (
                 <EmptyView
-                  title="No decks in your collection yet"
-                  description="Decks are groups of related cards for organizing your notes. Haven't created a deck yet? No problem. Click 'Create Deck +' to get started."
+                  title={isLoading ? "Loading decks..." : "No decks in your collection yet"}
+                  description={
+                    isLoading
+                      ? "Satellites are beeping, electrons are whirling, and your data is on its way to your device..."
+                      : "Decks are groups of related cards for organizing your notes. Haven't created a deck yet? No problem. Click 'Create Deck +' to get started."
+                  }
                 />
               )}
             </div>

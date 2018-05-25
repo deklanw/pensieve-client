@@ -25,7 +25,6 @@ import {
   EditCardModal,
   MODAL_TYPES
 } from "../../components/modals";
-import { Loading } from "../../components";
 
 const REVIEW_TYPE = {
   REDO: "redo",
@@ -53,6 +52,26 @@ const EmptyView = () => (
   </div>
 );
 
+const LoadingView = () => (
+  <div>
+    <div className="container mt-3">
+      <div className="row">
+        <div className="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+          <Segment className="review-container-panel mt-2 mb-4">
+            <Progress attached="top" value={0} total={10} color="blue" />
+            <Label attached="bottom" as="a" className="text-secondary">
+              <Icon loading name="spinner" />Loading...
+            </Label>
+            <Header as="h2" className="text-center my-5" color="grey">
+              Loading cards...
+            </Header>
+          </Segment>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 class Review extends Component {
   state = {
     index: 0,
@@ -60,7 +79,7 @@ class Review extends Component {
     showAnswers: false,
     session: {},
     showModalType: undefined,
-    loading: true
+    isLoading: true,
   };
 
   componentDidMount = () => {
@@ -97,7 +116,7 @@ class Review extends Component {
 
   fetchSession = sessionId => {
     api.fetchSession(sessionId).then(response => {
-      this.setState({ session: response.data, loading: false });
+      this.setState({ session: response.data, isLoading: false });
     });
   };
 
@@ -152,25 +171,18 @@ class Review extends Component {
   };
 
   render() {
-    const {
-      index,
-      session,
-      showFront,
-      showAnswers,
-      showModalType,
-      loading
-    } = this.state;
+    const { index, session, showFront, showAnswers, showModalType, isLoading } = this.state;
     const { cards = [] } = session;
 
-    if (loading) {
-      return <Loading />;
+    if (isLoading) {
+      return <LoadingView />;
     }
 
-    if (cards.length === 0) {
+    if (!isLoading && cards.length === 0) {
       return <EmptyView />;
     }
 
-    if (index > cards.length - 1) {
+    if (!isLoading && index > cards.length - 1) {
       return <Results cards={cards} />;
     }
 
@@ -252,7 +264,7 @@ class Review extends Component {
                   {showFront ? "Front" : "Back"}
                 </Label>
                 <Header as="h2" className="text-center my-5">
-                  {cardContent}
+                  {isLoading ? "Loading cards..." : cardContent}
                 </Header>
               </Segment>
               <div className="review-actions">

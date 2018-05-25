@@ -21,7 +21,7 @@ import {
 } from "../../../components/modals";
 import withErrors from "../../../helpers/withErrors";
 
-import { ProgressBar, Loading } from "../../../components";
+import { ProgressBar } from "../../../components";
 
 import * as api from "../deckActions";
 import * as cardApi from "../../cards/cardActions";
@@ -56,7 +56,7 @@ class DeckHome extends Component {
     cards: [],
     showModalType: undefined,
     selectedCard: undefined,
-    loading: true
+    isLoading: true,
   };
 
   componentDidMount() {
@@ -130,14 +130,14 @@ class DeckHome extends Component {
   };
 
   fetchDeck = deckId => {
-    return api.fetchDeck(deckId).then(response => {
-      this.setState({ deck: response.data });
+    api.fetchDeck(deckId).then(response => {
+      this.setState({ deck: response.data, isLoading: false });
     });
   };
 
   fetchCards = deckId => {
-    return cardApi.fetchCards(deckId).then(response => {
-      this.setState({ cards: response.data });
+    cardApi.fetchCards(deckId).then(response => {
+      this.setState({ cards: response.data, isLoading: false });
     });
   };
 
@@ -171,12 +171,8 @@ class DeckHome extends Component {
   };
 
   render() {
-    const { deck, cards, showModalType, selectedCard, loading } = this.state;
+    const { deck, cards, showModalType, selectedCard, isLoading } = this.state;
     const numExpiredCards = cards.filter(card => card.recallRate <= 0.5).length;
-
-    if (loading) {
-      return <Loading />;
-    }
 
     return (
       <div className="deck-home mt-4">
@@ -221,10 +217,10 @@ class DeckHome extends Component {
                 DECK
               </Header>
               <div className="deck-header">
-                <h1 className="font-weight-bold h3 mb-0 mt-0">{deck.title}</h1>
-                {deck.description && (
-                  <p className="text-dark h5 mb-1">{deck.description}</p>
-                )}
+                <h1 className="font-weight-bold h3 mb-0 mt-0">
+                  {isLoading ? <span className="text-secondary">Loading info...</span> : deck.title}
+                </h1>
+                {deck.description && <p className="text-dark h5 mb-1">{deck.description}</p>}
               </div>
               <p
                 className="text-secondary text-uppercase m-0 mt-4 mb-2"
@@ -341,8 +337,18 @@ class DeckHome extends Component {
                 </div>
               ) : (
                 <EmptyView
-                  title="Add cards to your deck"
-                  description="Decks are made of related notes. Start adding cards to your deck by clicking 'Add Card +'"
+                  title={
+                    isLoading ? (
+                      <span className="text-secondary">Loading cards...</span>
+                    ) : (
+                      "Add cards to your decks"
+                    )
+                  }
+                  description={
+                    isLoading
+                      ? "Electrons are beaming to your computer as we speak."
+                      : "Decks are made of related notes. Start adding cards to your deck by clicking 'Add Card +'"
+                  }
                 />
               )}
             </div>

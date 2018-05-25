@@ -16,7 +16,7 @@ class Account extends Component {
   state = {
     user: { name: "", email: "", prefs: {} },
     showModalType: undefined,
-    loading: true
+    isLoading: true
   };
 
   componentDidMount = () => {
@@ -35,31 +35,31 @@ class Account extends Component {
   fetchUser = () => {
     api.fetchUser().then(({ data }) => {
       const { name, email, prefs } = data;
-      this.setState({ user: { name, email, prefs }, loading: false });
+      this.setState({ user: { name, email, prefs }, isLoading: false });
     });
   };
 
   editUser = () => {
     const { user } = this.state;
-    this.setState({ loading: true });
+    this.setState({ isLoading: true });
     api.editUser(user).then(({ data }) => {
       const { name, email, prefs } = data;
-      this.setState({ user: { name, email, prefs }, loading: false });
+      this.setState({ user: { name, email, prefs }, isLoading: false });
     });
   };
 
   deleteUser = () => {
-    // loading never gets set back to false since the component unmounts after deletion
-    this.setState({ loading: true });
+    // isLoading never gets set back to false since the component unmounts after deletion
+    this.setState({ isLoading: true });
     api.deleteUser().then(response => {
       this.props.history.push("/logout");
     });
   };
 
   render() {
-    const { user, showModalType, loading } = this.state;
+    const { user, showModalType, isLoading } = this.state;
 
-    if (loading) {
+    if (isLoading) {
       return <Loading />;
     }
 
